@@ -2,37 +2,148 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>電卓</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>ND-26S風電卓</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --main-bg: #0a1e3f;
+      --button-bg: #1c2e59;
+      --button-hover: #284179;
+      --text-color: #ffffff;
+      --display-bg: #020d23;
+      --accent: #00ffc8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--main-bg);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .calculator {
+      background: #101e3a;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.3);
+      width: 100%;
+      max-width: 400px;
+    }
+    .display {
+      font-size: 2em;
+      text-align: right;
+      padding: 15px;
+      background: var(--display-bg);
+      color: var(--accent);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      overflow-x: auto;
+    }
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+    button {
+      font-size: 1.2em;
+      padding: 15px;
+      background: var(--button-bg);
+      color: var(--text-color);
+      border: none;
+      border-radius: 6px;
+      transition: background 0.2s, transform 0.1s;
+      cursor: pointer;
+    }
+    button:hover { background: var(--button-hover); }
+    button:active { transform: scale(0.95); }
+    .wide { grid-column: span 2; }
+    .tall { grid-row: span 2; }
+  </style>
 </head>
 <body>
   <div class="calculator">
-    <input type="text" id="display" disabled />
-    <div class="buttons">
-      <button onclick="press('7')">7</button>
-      <button onclick="press('8')">8</button>
-      <button onclick="press('9')">9</button>
-      <button onclick="press('/')">÷</button>
-
-      <button onclick="press('4')">4</button>
-      <button onclick="press('5')">5</button>
-      <button onclick="press('6')">6</button>
-      <button onclick="press('*')">×</button>
-
-      <button onclick="press('1')">1</button>
-      <button onclick="press('2')">2</button>
-      <button onclick="press('3')">3</button>
-      <button onclick="press('-')">−</button>
-
-      <button onclick="press('0')">0</button>
-      <button onclick="press('.')">.</button>
-      <button onclick="calculate()">=</button>
-      <button onclick="press('+')">＋</button>
-
-      <button onclick="clearDisplay()" class="clear">C</button>
+    <div class="display" id="display">0</div>
+    <div class="keys" id="keys">
+      <button>H/M/S</button>
+      <button>%</button>
+      <button>▶</button>
+      <button>√</button>
+      <button>GT</button>
+      <button>MC</button>
+      <button>MR</button>
+      <button>M-</button>
+      <button>M+</button>
+      <button>÷</button>
+      <button>+/-</button>
+      <button>7</button>
+      <button>8</button>
+      <button>9</button>
+      <button>×</button>
+      <button>AC</button>
+      <button>4</button>
+      <button>5</button>
+      <button>6</button>
+      <button>-</button>
+      <button>C</button>
+      <button>1</button>
+      <button>2</button>
+      <button>3</button>
+      <button class="tall">+</button>
+      <button>0</button>
+      <button>00</button>
+      <button>.</button>
+      <button>=</button>
     </div>
   </div>
-  <script src="script.js"></script>
+  <script>
+    const display = document.getElementById('display');
+    const keys = document.getElementById('keys');
+    let current = '0', memory = 0, gtMemory = 0, operator = '', lastValue = null;
+
+    function formatNumber(val) {
+      if (isNaN(val)) return val;
+      const parts = val.toString().split(".");
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      return parts.join(".");
+    }
+
+    keys.addEventListener('click', e => {
+      if (!e.target.matches('button')) return;
+      const key = e.target.textContent;
+
+      switch (key) {
+        case 'AC': current = '0'; operator = ''; lastValue = null; break;
+        case 'C': case '▶': current = current.slice(0, -1) || '0'; break;
+        case '=':
+          try {
+            if (operator && lastValue !== null) {
+              current = eval(`${lastValue}${operator}${current}`);
+              current = parseFloat(current).toString();
+              gtMemory += parseFloat(current);
+              lastValue = null; operator = '';
+            }
+          } catch { current = 'Error'; }
+          break;
+        case '+': case '-': case '×': case '÷':
+          operator = key.replace('×', '*').replace('÷', '/');
+          lastValue = current; current = '0';
+          break;
+        case 'M+': memory += parseFloat(current); break;
+        case 'M-': memory -= parseFloat(current); break;
+        case 'MR': current = memory.toString(); break;
+        case 'MC': memory = 0; break;
+        case 'GT': current = gtMemory.toString(); break;
+        case '√': current = Math.sqrt(parseFloat(current)).toString(); break;
+        case '+/-': current = (parseFloat(current) * -1).toString(); break;
+        case '.': if (!current.includes('.')) current += '.'; break;
+        case 'H/M/S': alert('時間計算は未実装です'); break;
+        case '%': current = (parseFloat(current) / 100).toString(); break;
+        default:
+          if (!isNaN(key)) current = current === '0' ? key : current + key;
+      }
+      display.textContent = formatNumber(current);
+    });
+  </script>
 </body>
 </html>
