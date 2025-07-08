@@ -1,41 +1,38 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<title>あなたのＨＰタイトル</title>
-<meta name="keywords" content="ページのキーワードA,B,C">
-<meta name="description" content="ページの説明">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>電卓</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div id="outer">
-<header>
-<div class="header-inner">
-<h1>あなたのＨＰタイトル</h1>
-<p>あなたのＨＰの説明文</p>
-</div>
-</header>
-<div id="content">
-<div class="inner">
-<h2>記事ページ見出し・大</h2>
-<p>文章あれこれ</p>
-<h3>記事ページ見出し・中</h3>
-<p>文章あれこれ</p>
-<h4>記事ページ見出し・小</h4>
-<p>文章あれこれ</p>
-</div>
-<aside>
-<div class="left-title">サイドバータイトル</div>
-<div class="link">
-<ul>
-<li>記事ページへのリンク</li>
-<li>記事ページへのリンク</li>
-</ul>
-</div>
-</aside>
-</div>
-<footer>© 2010 あなたのホームページ</footer>
-</div>
+  <div class="calculator">
+    <input type="text" id="display" disabled />
+    <div class="buttons">
+      <button onclick="press('7')">7</button>
+      <button onclick="press('8')">8</button>
+      <button onclick="press('9')">9</button>
+      <button onclick="press('/')">÷</button>
+
+      <button onclick="press('4')">4</button>
+      <button onclick="press('5')">5</button>
+      <button onclick="press('6')">6</button>
+      <button onclick="press('*')">×</button>
+
+      <button onclick="press('1')">1</button>
+      <button onclick="press('2')">2</button>
+      <button onclick="press('3')">3</button>
+      <button onclick="press('-')">−</button>
+
+      <button onclick="press('0')">0</button>
+      <button onclick="press('.')">.</button>
+      <button onclick="calculate()">=</button>
+      <button onclick="press('+')">＋</button>
+
+      <button onclick="clearDisplay()" class="clear">C</button>
+    </div>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
